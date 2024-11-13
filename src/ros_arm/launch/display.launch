@@ -1,0 +1,20 @@
+
+<launch>
+  <!-- No need to set the robot_description again, as it's already on the parameter server -->
+
+  <!-- Run the robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+  <!-- Run the joint state GUI publisher -->
+  <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+
+  <!-- Run RViz -->
+  <node name="rviz" pkg="rviz" type="rviz" />
+
+  <!-- Additional Control Nodes or Sensor Nodes can go here -->
+  <!-- For example, if you have a control node -->
+  <!-- <node name="control_node" pkg="your_control_package" type="your_control_node"/> -->
+
+</launch>
+
+

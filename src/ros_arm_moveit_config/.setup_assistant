@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: ros_arm
+    relative_path: urdf/ros_arm.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/ros_arm.srdf
+  CONFIG:
+    author_name: sunprodefi
+    author_email: sunprodefi@gmail.com
+    generated_timestamp: 1693552908

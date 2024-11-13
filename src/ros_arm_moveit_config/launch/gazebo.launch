@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!-- XML版本为1.0，这是文档的元数据信息 -->
+<launch>
+  <!-- 启动标签，表示开始一个ROS启动文件 -->
+  <!-- Gazebo选项 -->
+  <arg name="gazebo_gui" default="true" doc="Start Gazebo GUI"/>
+  <!-- 定义一个名为"gazebo_gui"的参数，设置其默认值为"true"，决定是否启动Gazebo的图形界面 -->
+  <arg name="paused" default="false" doc="Start Gazebo paused"/>
+  <!-- 定义一个名为"paused"的参数，设置其默认值为"false"，决定Gazebo是否以暂停状态启动 -->
+  <arg name="world_name" default="worlds/empty.world" doc="Gazebo world file"/>
+  <!-- 定义一个名为"world_name"的参数，设置默认的Gazebo世界文件为"worlds/empty.world" -->
+  <arg name="world_pose" default="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" doc="Pose to spawn the robot at"/>
+  <!-- 定义一个名为"world_pose"的参数，设置机器人在Gazebo世界中的初始姿态 -->
+  <!-- <arg name="initial_joint_positions" default=" -J joint1 0 -J joint2 0 -J joint3 0" doc="Initial joint configuration of the robot"/> -->
+  <!-- 定义一个名为"initial_joint_positions"的参数，设置机器人关节的初始位置 -->
+  <!-- 启动Gazebo，并暂停以便控制器获取初始姿态 -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch" pass_all_args="true">
+    <arg name="paused" value="true"/>
+  </include>
+  <!-- 包含Gazebo的"empty_world.launch"启动文件，并设置模拟器以暂停状态启动 -->
+  <!-- 将机器人的urdf文件设置到参数服务器上 -->
+  <param name="robot_description" textfile="$(find ros_arm_moveit_config)/config/gazebo_ros_arm.urdf" />
+  <!-- 加载URDF（Unified Robot Description Format）到参数服务器，用于描述机器人 -->
+  <!-- 加载机器人模型后取消模拟暂停 -->
+  <arg name="unpause" value="$(eval '' if arg('paused') else '-unpause')" />
+  <!-- 定义一个名为"unpause"的参数，该参数用于控制是否在加载机器人模型后取消模拟器暂停 -->
+  <!-- 在Gazebo中生成机器人 -->
+  <!-- <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot $(arg unpause) $(arg world_pose) $(arg initial_joint_positions)"
+    respawn="false" output="screen" /> -->
+  <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot $(arg unpause) $(arg world_pose)"
+    respawn="false" output="screen" />
+  <!-- 使用`gazebo_ros`包中的`spawn_model`节点在Gazebo中生成机器人模型 -->
+  <!-- 将控制器参数加载到参数服务器上 -->
+  <rosparam file="$(find ros_arm_moveit_config)/config/gazebo_controllers.yaml" />
+  <!-- 从YAML文件加载控制器参数 -->
+  <include file="$(dirname)/ros_controllers.launch"/>
+  <!-- 包含`ros_controllers.launch`启动文件，该文件通常包含ROS控制器的设置 -->
+  <!-- 生成Gazebo ROS控制器 -->
+  <node name="gazebo_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="joint_state_controller" />
+  <!-- 使用`controller_manager`包中的`spawner`节点生成Gazebo中的ROS控制器 -->
+  <!-- 根据发布的关节状态为机器人链发布tf -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+  <!-- 使用`robot_state_publisher`节点根据关节状态发布tf（变换），用于跟踪机器人各部分的位置和方向 -->
+</launch>
+<!-- 结束启动文件 -->
+
