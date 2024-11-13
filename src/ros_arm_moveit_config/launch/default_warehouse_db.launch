@@ -1,0 +1,16 @@
+<launch>
+  <!-- 定义一个名为 "reset" 的参数，默认值为 "false" -->
+  <arg name="reset" default="false"/>
+  <!-- 定义一个名为 "moveit_warehouse_database_path" 的参数，如果不指定，将使用默认数据库位置 -->
+  <arg name="moveit_warehouse_database_path" default="$(find ros_arm_moveit_config)/default_warehouse_mongo_db" />
+  <!-- 使用配置的数据库位置来启动仓库（warehouse）。这通常是用于存储和检索机器人运动规划数据的数据库 -->
+  <include file="$(dirname)/warehouse.launch">
+    <arg name="moveit_warehouse_database_path" value="$(arg moveit_warehouse_database_path)" />
+  </include>
+  <!-- 如果 "reset" 参数为 true，运行一个用于重置MoveIt数据库的节点 -->
+  <!-- 这个节点的名称是一个匿名名称，这意味着ROS将为这个节点生成一个唯一的名称 -->
+  <!-- "respawn" 属性设为 "false"，意味着如果该节点死亡（崩溃或被杀死），它不会被重新启动 -->
+  <!-- "output" 属性设为 "screen"，表示该节点的输出将直接显示在屏幕上 -->
+  <node if="$(arg reset)" name="$(anon moveit_default_db_reset)" type="moveit_init_demo_warehouse" pkg="moveit_ros_warehouse" respawn="false" output="screen" />
+</launch>
+

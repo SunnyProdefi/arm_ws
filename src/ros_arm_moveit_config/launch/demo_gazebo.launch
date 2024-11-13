@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- XML版本为1.0，这是文档的元数据信息 -->
+<launch>
+  <!-- 启动标签，表示开始一个ROS启动文件 -->
+  <!-- MoveIt选项 -->
+  <arg name="pipeline" default="ompl" doc="Planning pipeline to use with MoveIt"/>
+  <!-- 定义一个名为"pipeline"的参数，并设置其默认值为"ompl"。该参数用于指定MoveIt将使用哪种规划算法 -->
+  <!-- Gazebo选项 -->
+  <arg name="gazebo_gui" default="true" doc="Start Gazebo GUI"/>
+  <!-- 定义一个名为"gazebo_gui"的参数，设置其默认值为"true"。该参数决定是否启动Gazebo的图形界面 -->
+  <arg name="paused" default="false" doc="Start Gazebo paused"/>
+  <!-- 定义一个名为"paused"的参数，设置其默认值为"false"。该参数决定Gazebo是否应以暂停状态启动 -->
+  <arg name="world_name" default="worlds/empty.world" doc="Gazebo world file"/>
+  <!-- 定义一个名为"world_name"的参数，并设置其默认值为"worlds/empty.world"。该参数用于指定Gazebo将加载哪个世界文件 -->
+  <arg name="world_pose" default="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" doc="Pose to spawn the robot at"/>
+  <!-- 定义一个名为"world_pose"的参数，设置其默认值为各个坐标和角度的初始值。该参数用于指定机器人在Gazebo世界中的初始姿态 -->
+  <!-- 启动Gazebo并生成机器人 -->
+  <include file="$(dirname)/gazebo.launch" pass_all_args="true"/>
+  <!-- 包含另一个启动文件"gazebo.launch"，并传递所有参数。这通常用于启动Gazebo模拟器和生成机器人模型 -->
+  <!-- 启动MoveIt -->
+  <include file="$(dirname)/demo.launch" pass_all_args="true">
+  <!-- 包含另一个启动文件"demo.launch"，并传递所有参数。这通常用于启动MoveIt规划和控制功能 -->
+    <!-- robot_description是由gazebo.launch加载的，以启用Gazebo功能 -->
+    <arg name="load_robot_description" value="true" />
+    <!-- 定义一个名为"load_robot_description"的参数，并设置其值为"true"。这表示需要从"gazebo.launch"中加载机器人描述 -->
+    <arg name="moveit_controller_manager" value="ros_control" />
+    <!-- 定义一个名为"moveit_controller_manager"的参数，并设置其值为"ros_control"。该参数指定MoveIt将使用哪个控制器管理器 -->
+  </include>
+  <!-- 结束包含的"demo.launch" -->
+</launch>
+<!-- 结束启动文件 -->
